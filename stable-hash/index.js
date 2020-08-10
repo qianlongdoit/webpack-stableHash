@@ -6,18 +6,18 @@ const JS = 'javascript/auto';
 class MyPlugin {
     apply(compiler) {
         compiler.hooks.thisCompilation.tap(pluginName, (compilation) => {
-            console.log(compilation);
+            // console.log(compilation);
             compilation.mainTemplate.hooks.hashForChunk.tap(pluginName, (hash, chunk) => {
                 // console.log(hash, chunk);
                 const { outputOptions } = compilation;
                 const { hashFunction, hashDigest, hashDigestLength } = outputOptions;
 
-                const {_value} = chunk.entryModule._source;
+                const {_value} = chunk.entryModule._source ||{};
 
                 for (const m of chunk.modulesIterable) {
                     const {type, _source, id,} = m || {};
                     if (type === EXTRACT_CSS) {
-                        console.log(typeof m.source);
+                        // console.log(typeof m.source);
                         //区分业务css 模块css
 
                     } else if (type === JS) {

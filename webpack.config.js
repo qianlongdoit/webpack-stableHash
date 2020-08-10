@@ -5,19 +5,18 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
-const MiniCssExtractPlugin  = require('mini-css-extract-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const StableHash = require('./stable-hash');
 
 
 module.exports = {
-    // entry: {
-    //   "index": "./src/js/index.js",
-    //   "slide": "./src/js/slide.js"
-    // },
-    entry: "./src/js/index.js",
+    entry: {
+        'vendor': Object.keys(require('./package.json').dependencies),
+        "index": ["./src/js/index.js"],
+    },
     mode: 'development',
     output: {
-        filename: "./js/[name]-[contenthash:8].js",
+        filename: "./js/[name]-[chunkhash:8].js",
         path: path.resolve(__dirname, 'dist')
     },
     module: {
@@ -25,7 +24,7 @@ module.exports = {
             {
                 test: /\.css$/,
                 use: [
-                    {loader: MiniCssExtractPlugin.loader},
+                    MiniCssExtractPlugin.loader,
                     'css-loader'
                 ]
             }
@@ -42,16 +41,13 @@ module.exports = {
         // new ExtractTextPlugin('./css/[name]-[hash].css'),
         new MiniCssExtractPlugin({
             //导出文件名，含路径
-            filename: '[name]_[chunkhash:8].css',
+            filename: '[name]_[hash:8].css',
             //向所有额外的 chunk 提取（默认只提取初始加载模块）
             allChunks: true
         }),
-        new webpack.DllReferencePlugin({
-            entry: {
-                vendor: Object.keys(require('./package.json').dependencies),
-            },
-            path: 'src/static/vendor',
-            name: '[name]_[chunkhash:8]'
+        new webpack.DllPlugin({
+            path: 'src/static/vendor.js',
+            name: '[name]_[hash:8]'
         }),
         new StableHash()
     ]
