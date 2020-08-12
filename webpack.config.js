@@ -41,14 +41,14 @@ module.exports = {
         // new ExtractTextPlugin('./css/[name]-[hash].css'),
         new MiniCssExtractPlugin({
             //导出文件名，含路径
-            filename: '[name]_[hash:8].css',
+            filename: './css/[name]_[hash:8].css',
             //向所有额外的 chunk 提取（默认只提取初始加载模块）
             allChunks: true
         }),
+        new StableHash(),
         new webpack.DllPlugin({
             path: 'src/static/vendor.js',
-            name: '[name]_[hash:8]'
+            name: '[name]_[chunkhash:8]'
         }),
-        new StableHash()
     ]
 };
